@@ -6,12 +6,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.bmdb.business.Movie;
-import com.bmdb.db.MovieRepo;
+import com.bmdb.business.Actor;
+import com.bmdb.db.ActorRepo;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/movies")
+@RequestMapping("/actors")
 public class ActorController {
 	/*
 	 *  A controller will implement 5 CRUD methods:
@@ -23,45 +23,45 @@ public class ActorController {
 	 */
 	
 	@Autowired
-	private MovieRepo movieRepo; 
+	private ActorRepo actorRepo; 
 	
-	// Get all movies
+	// Get all actors
 	@GetMapping("/")
-	public List<Movie> getAll() {
-		return movieRepo.findAll();
+	public List<Actor> getAll() {
+		return actorRepo.findAll();
 	}
 	
-	// Get a movie by ID
+	// Get a actor by ID
 	@GetMapping("/{id}")
-	public Optional<Movie> getById(@PathVariable int id) {
-		return movieRepo.findById(id);
+	public Optional<Actor> getById(@PathVariable int id) {
+		return actorRepo.findById(id);
 	}
 	
-	// Add a movie
+	// Add a actor
 	@PostMapping("/")
-	public Movie addMovie(@RequestBody Movie m) {
-		m = movieRepo.save(m);
-		return m;
+	public Actor addActor(@RequestBody Actor a) {
+		a = actorRepo.save(a);
+		return a;
 	}
 	
-	// Update a movie
+	// Update an actor
 	@PutMapping("/")
-	public Movie updateMovie(@RequestBody Movie m) {
-		m = movieRepo.save(m);
-		return m;
+	public Actor updateActor(@RequestBody Actor a) {
+		a = actorRepo.save(a);
+		return a;
 	}
 	
-	// Delete movie
+	// Delete actor
 	@DeleteMapping("/{id}")
-	public Movie deleteMovie(@PathVariable int id) {
-		// Optional type will wrap a movie
-		Optional<Movie> m = movieRepo.findById(id);
+	public Actor deleteActor(@PathVariable int id) {
+		// Optional type will wrap an actor
+		Optional<Actor> a = actorRepo.findById(id);
 		// isPresent() will return true if a movie was found
-		if (m.isPresent()) {
-			movieRepo.deleteById(id);
+		if (a.isPresent()) {
+			actorRepo.deleteById(id);
 		} else {
-			System.out.println("Error - Movie not found for id: " + id);
+			System.out.println("Error - Actor not found for id: " + id);
 		}
-		return m.get();
+		return a.get();
 	}
 }
