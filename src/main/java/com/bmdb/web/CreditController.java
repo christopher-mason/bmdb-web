@@ -38,9 +38,29 @@ public class CreditController {
 		return creditRepo.findById(id);
 	}
 	
+	// Add Credit
 	@PostMapping("/")
 	public Credit addCredit(@RequestBody Credit c) {
 		c = creditRepo.save(c);
 		return c;
 	}
+	
+	// Update Credit
+	@PutMapping("/")
+	public Credit updateCredit(@RequestBody Credit c) {
+		c = creditRepo.save(c);
+		return c;
+	}
+	
+	// Delete User
+		@DeleteMapping("/{id}")
+		public Credit deleteCredit(@PathVariable int id) {
+			Optional<Credit> c = creditRepo.findById(id);
+			if (c.isPresent()) {
+				creditRepo.deleteById(id);
+			} else {
+				System.out.println("Error - Credit not found with ID: " + id);
+			}
+			return c.get();
+		}
 }
