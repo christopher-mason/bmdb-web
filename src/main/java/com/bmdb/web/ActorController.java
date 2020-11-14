@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import com.bmdb.business.Actor;
@@ -86,9 +87,13 @@ public class ActorController {
 		
 	// List actors born between d1 and d2
 	@GetMapping("/find-by-bithdate-between")
-	public List<Actor> getActorsByBirthDateBetween(@RequestParam String d1, String d2) {
-		LocalDate ld1 = LocalDate.parse(d1);
-		LocalDate ld2 = LocalDate.parse(d2);
+	public List<Actor> getActorsByBirthDateBetween(
+			@RequestParam("ld1") 
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ld1, 
+			@RequestParam("ld2") 
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ld2) {
+//		LocalDate ld1 = LocalDate.parse(d1);
+//		LocalDate ld2 = LocalDate.parse(d2);
 		return actorRepo.findByBirthDateBetween(ld1, ld2);
 	}
 }
