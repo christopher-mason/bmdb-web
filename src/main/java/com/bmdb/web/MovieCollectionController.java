@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.bmdb.business.MovieCollection;
+import com.bmdb.business.User;
 import com.bmdb.db.MovieCollectionRepo;
+import com.bmdb.db.UserRepo;
 
 @CrossOrigin
 @RestController
@@ -24,6 +26,8 @@ public class MovieCollectionController {
 	
 	@Autowired
 	private MovieCollectionRepo movieCollectionRepo; 
+	@Autowired
+	private UserRepo userRepo; 
 	
 	// Get all movieCollections
 	@GetMapping("/")
@@ -38,30 +42,49 @@ public class MovieCollectionController {
 	}
 	
 	// Add a movieCollection
+	// Also recalculate the collection value in User
 	@PostMapping("/")
-	public MovieCollection addMovieCollection(@RequestBody MovieCollection mc) {
-		mc = movieCollectionRepo.save(mc);
-		return mc;
+	public MovieCollection addMovieCollection(@RequestBody MovieCollection m) {
+		m = movieCollectionRepo.save(m);
+		recalculateCollectionValue(m);
+		return m;
+	}
+
+	private void recalculateCollectionValue(MovieCollection m) {
+		// get all movie collections for this user
+		// loop through them and sum a new total
+		double newTotal = 0.0;
+		List<MovieCollection> mcs = movieCollectionRepo.findByUserId(m.getUser().getId()); // all movie collection
+		for (MovieCollection mc : mcs) {
+			newTotal += mc.getPurchasePrice();
+		}
+		User u = m.getUser();
+		u.setCollectionValue(newTotal);
+		userRepo.save(u);
 	}
 	
 	// Update a movieCollection
+	// Also recalculate the collection value in User
 	@PutMapping("/")
-	public MovieCollection updateMovieCollection(@RequestBody MovieCollection mc) {
-		mc = movieCollectionRepo.save(mc);
-		return mc;
+	public MovieCollection updateMovieCollection(@RequestBody MovieCollection m) {
+		m = movieCollectionRepo.save(m);
+		recalculateCollectionValue(m);
+		return m;
 	}
 	
 	// Delete movieCollection
+	// Also recalculate the collection value in User
 	@DeleteMapping("/{id}")
 	public MovieCollection deleteMovieCollection(@PathVariable int id) {
 		// Optional type will wrap a movieCollection
-		Optional<MovieCollection> mc = movieCollectionRepo.findById(id);
+		Optional<MovieCollection> m = movieCollectionRepo.findById(id);
 		// isPresent() will return true if a movieCollection was found
-		if (mc.isPresent()) {
+		if (m.isPresent()) {
 			movieCollectionRepo.deleteById(id);
+			recalculateCollectionValue(m.get());
 		} else {
 			System.out.println("Error - MovieCollection not found for id: " + id);
 		}
-		return mc.get();
+		return m.get();
 	}
 }
